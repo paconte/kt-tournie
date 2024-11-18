@@ -1,5 +1,7 @@
 package com.paconte
 
+import java.nio.file.Files
+import java.nio.file.Paths
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -7,10 +9,9 @@ import kotlin.test.assertFailsWith
 class PadelGameTest {
     @Test
     fun testPadelGameFromString() {
-        val input =
-            @Suppress("ktlint:standard:max-line-length")
-            // "GERMANY;GPS 1000 Cuxhaven - Herren;GPS-1000;MO;05.07.2020;;;PoolA;Gold;Ströhl;Richard;Messerschmidt;Jonas;Viebrock;Lars;Hagen;Ralf;2;6;0;6;0"
-            "GERMANY;GPS 1000 Cuxhaven - Herren;GPS-1000;MO;05.07.2020;;PoolA;Gold;Ströhl;Richard;Messerschmidt;Jonas;Viebrock;Lars;Hagen;Ralf;6;0;6;0"
+        val path = Paths.get("src/test/resources/padel_games.csv")
+        val input2 = path.toFile().readLines().first()
+        val input = Files.readString(path).trim()
 
         val padelGame = PadelGame.fromString(input)
 
@@ -18,13 +19,20 @@ class PadelGameTest {
         assertEquals("GPS 1000 Cuxhaven - Herren", padelGame.tournamentName)
         assertEquals("GPS-1000", padelGame.tier)
         assertEquals("MO", padelGame.division)
-        assertEquals("05.07.2020", padelGame.dateStart)
-        assertEquals("", padelGame.dateEnd)
+        assertEquals("05.07.2020", padelGame.date)
         assertEquals("PoolA", padelGame.round)
         assertEquals("Gold", padelGame.medal)
         assertEquals("Ströhl-Richard-Messerschmidt-Jonas", padelGame.local.name())
         assertEquals("Viebrock-Lars-Hagen-Ralf", padelGame.visitor.name())
         assertEquals(listOf(6, 0, 6, 0), padelGame.score.score)
+    }
+
+    @Test
+    fun testGER2015() {
+        val path = Paths.get("src/test/resources/GER_tournaments_2015_utf8.csv")
+        Files.lines(path).forEach {
+            PadelGame.fromString(it)
+        }
     }
 
     @Test

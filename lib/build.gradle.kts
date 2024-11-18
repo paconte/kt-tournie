@@ -25,6 +25,7 @@ plugins {
     // Apply the java-library plugin for API and implementation separation.
     `java-library`
 
+    // Linter
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
 }
 
@@ -39,6 +40,10 @@ dependencies {
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation(libs.guava)
+
+    // app dependencies
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2") // YAML parser used for reading the config file
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.2") // YAML parser used for reading the config file
 }
 
 testing {
@@ -46,7 +51,7 @@ testing {
         // Configure the built-in test suite
         val test by getting(JvmTestSuite::class) {
             // Use Kotlin Test test framework
-            useKotlinTest("2.0.20")
+            useKotlinTest("2.0.21")
         }
     }
 }
