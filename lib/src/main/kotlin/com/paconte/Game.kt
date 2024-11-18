@@ -1,14 +1,11 @@
 package com.paconte
 
-val delimiter = ";" // TODO: make this configurable later
-
 interface IGame {
     val federation: String
     val tournamentName: String
     val tier: String
     val division: String
-    val dateStart: String
-    val dateEnd: String
+    val date: String
     val round: String
     val medal: String
     val local: ITeam

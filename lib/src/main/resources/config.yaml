@@ -1,0 +1,4 @@
+# Configuration file for the application
+csv:
+  delimiter: ";"
+  padelScoreStart: 15

@@ -1,5 +1,7 @@
 package com.paconte
 
+import com.paconte.ConfigLoader.config
+
 interface IPadelTeam : ITeam {
     val lastNameP1: String
     val firstNameP1: String
@@ -19,7 +21,7 @@ class PadelScore(
 
     companion object {
         fun fromString(input: String): PadelScore {
-            val setScores = input.split(delimiter).map { it.toInt() }
+            val setScores = input.split(config.csv.delimiter).map { it.toInt() }
             return PadelScore(setScores)
         }
     }
@@ -33,7 +35,7 @@ class PadelTeam(
 ) : IPadelTeam {
     companion object {
         fun fromString(input: String): PadelTeam {
-            val parts = input.split(delimiter)
+            val parts = input.split(config.csv.delimiter)
             require(parts.size == 4) { "Padel teams have exactly 4 elements" }
             return PadelTeam(
                 parts[0],
@@ -51,8 +53,7 @@ class PadelGame(
     override val tournamentName: String,
     override val tier: String,
     override val division: String,
-    override val dateStart: String,
-    override val dateEnd: String,
+    override val date: String,
     override val round: String,
     override val medal: String,
     override val local: PadelTeam,
@@ -61,11 +62,16 @@ class PadelGame(
 ) : IGame {
     companion object {
         fun fromString(input: String): PadelGame {
-            val parts = input.split(delimiter)
-            require(parts.size > 17) { "Padel games have at least 18 elements" }
-            val localString = "${parts[8]};${parts[9]};${parts[10]};${parts[11]}"
-            val visitorString = "${parts[12]};${parts[13]};${parts[14]};${parts[15]}"
-            val scoreString = "${parts[16]};${parts[17]};${parts[18]};${parts[19]}"
+            val parts = input.split(config.csv.delimiter)
+            require(parts.size > 16) { "Padel games have at least 17 elements" }
+            val localString = "${parts[7]};${parts[8]};${parts[9]};${parts[10]}"
+            val visitorString = "${parts[11]};${parts[12]};${parts[13]};${parts[14]}"
+            var scoreString = ""
+            for (i in config.csv.padelScoreStart until parts.size) {
+                require(parts[i].isNotEmpty()) { "Padel games have no empty fields" }
+                scoreString += parts[i] + ";"
+            }
+            scoreString = scoreString.dropLast(1)
             return PadelGame(
                 // federation
                 parts[0],
@@ -75,14 +81,12 @@ class PadelGame(
                 parts[2],
                 // division
                 parts[3],
-                // dateStart
+                // date
                 parts[4],
-                // dateEnd
-                parts[5],
                 // round
-                parts[6],
+                parts[5],
                 // medal
-                parts[7],
+                parts[6],
                 // local
                 PadelTeam.fromString(localString),
                 // visitor
