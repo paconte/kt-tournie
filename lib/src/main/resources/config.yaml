@@ -1,4 +1,12 @@
 # Configuration file for the application
 csv:
   delimiter: ";"
-  padelScoreStart: 15
+  padel_score_start: 15
+
+padel:
+  round_order: [
+    KO1, POS3, KO2, KO4, KO8, KO16, KO32,
+    PoolZ, PoolY, PoolH, PoolG, PoolF, PoolE, PoolD, PoolC, PoolB, PoolA
+  ]
+  # medal_order: [Gold, Silver, Bronze, Previa, Preprevia]
+  medal_order: [Preprevia, Previa, Bronze, Silver, Gold]

@@ -19,6 +19,8 @@ class PadelScore(
         require(score.size % 2 == 0) { "Padel games have an even number of sets" }
     }
 
+    override fun toString(): String = score.joinToString(config.csv.delimiter)
+
     companion object {
         fun fromString(input: String): PadelScore {
             val setScores = input.split(config.csv.delimiter).map { it.toInt() }
@@ -33,6 +35,11 @@ class PadelTeam(
     override val lastNameP2: String,
     override val firstNameP2: String,
 ) : IPadelTeam {
+    override fun toString(): String {
+        val d = config.csv.delimiter
+        return "$lastNameP1$d$firstNameP1$d$lastNameP2$d$firstNameP2"
+    }
+
     companion object {
         fun fromString(input: String): PadelTeam {
             val parts = input.split(config.csv.delimiter)
@@ -47,6 +54,18 @@ class PadelTeam(
     }
 }
 
+val roundComparator =
+    Comparator<String> { round1, round2 ->
+        val roundOrder = config.padel.roundsOrder
+        roundOrder.indexOf(round1).compareTo(roundOrder.indexOf(round2))
+    }
+
+val medalComparator =
+    Comparator<String> { medal1, medal2 ->
+        val medalsOrder = config.padel.medalsOrder
+        medalsOrder.indexOf(medal1).compareTo(medalsOrder.indexOf(medal2))
+    }
+
 // GERMANY;GPS 1000 Cuxhaven - Herren;GPS-1000;MO;05.07.2020;;;PoolA;Gold;4;;;Ströhl;Richard;Messerschmidt;Jonas;Viebrock;Lars;Hagen;Ralf;2;6;0;6;0;;;;;;
 class PadelGame(
     override val federation: String,
@@ -59,7 +78,26 @@ class PadelGame(
     override val local: PadelTeam,
     override val visitor: PadelTeam,
     override val score: PadelScore,
-) : IGame {
+) : IGame<PadelGame> {
+    override fun compareTo(other: PadelGame): Int =
+        compareValuesBy(
+            this,
+            other,
+            { it.federation },
+            { it.tournamentName },
+            { it.tier },
+            { it.division },
+            { medalComparator.compare(it.medal, other.medal) },
+            { roundComparator.compare(it.round, other.round) },
+        )
+
+    override fun fromString(input: String): PadelGame = fromString(input)
+
+    override fun toString(): String {
+        val d = config.csv.delimiter
+        return "$federation$d$tournamentName$d$tier$d$division$d$date$d$round$d$medal$d$local$d$visitor$d$score"
+    }
+
     companion object {
         fun fromString(input: String): PadelGame {
             val parts = input.split(config.csv.delimiter)
