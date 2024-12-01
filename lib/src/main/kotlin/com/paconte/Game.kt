@@ -1,6 +1,6 @@
 package com.paconte
 
-interface IGame {
+interface IGame<T> : Comparable<T> {
     val federation: String
     val tournamentName: String
     val tier: String
@@ -11,6 +11,8 @@ interface IGame {
     val local: ITeam
     val visitor: ITeam
     val score: Any
+
+    fun fromString(input: String): T
 }
 
 interface ITeam {

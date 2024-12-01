@@ -44,6 +44,8 @@ dependencies {
     // app dependencies
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2") // YAML parser used for reading the config file
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.2") // YAML parser used for reading the config file
+    implementation("org.slf4j:slf4j-api:2.0.16")
+    implementation("ch.qos.logback:logback-classic:1.5.12")
 }
 
 testing {
